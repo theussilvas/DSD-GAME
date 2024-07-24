@@ -6,10 +6,11 @@ class CallbackCliente:
         print(mensagem)
 
 def main():
-    ns = Pyro4.locateNS()
+    # Substitua 'IP_DO_SERVIDOR' pelo endereço IP do servidor
+    ns = Pyro4.locateNS(host="IP_DO_SERVIDOR")
     uri = ns.lookup("exemplo.jogo_jokenpo")
     jogo_jokenpo = Pyro4.Proxy(uri)
-    
+
     apelido = input("Digite seu apelido: ")
 
     daemon = Pyro4.Daemon()
