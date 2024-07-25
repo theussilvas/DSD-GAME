@@ -4,7 +4,7 @@ def menu_principal():
     print("\nMenu da Biblioteca:")
     print("1. Ver livros")
     print("2. Adicionar um livro")
-    print("3. Emprestar um livro")
+    print("3. Pegar um livro")
     print("4. Ver livros emprestados")
     print("5. Devolver um livro")
     print("6. Sair")
@@ -16,9 +16,11 @@ def menu_login():
     print("3. Sair")
 
 def main():
-    ns = Pyro4.locateNS()
-    uri = ns.lookup("acesso.biblioteca")
-    biblioteca = Pyro4.Proxy(uri)
+    # ns = Pyro4.locateNS()
+    # uri = ns.lookup("acesso.biblioteca")
+    # biblioteca = Pyro4.Proxy(uri)
+
+    biblioteca = Pyro4.Proxy(f"PYRONAME:acesso.biblioteca")
 
     usuario_logado = None
 
@@ -39,7 +41,7 @@ def main():
                 print()  # Pular uma linha
             
             elif escolha == "2":
-                livro = input("Digite o nome do livro para adicionar: ").lower()
+                livro = input("Digite o nome do livro para adicionar: ")
                 resultado = biblioteca.adicionarLivro(livro)
                 print(resultado)
             
@@ -50,7 +52,7 @@ def main():
                     print("Livros disponíveis para empréstimo:")
                     for i, livro in enumerate(livros):
                         print(f"{i + 1}. {livro}")
-                    livro_index_str = input("Digite o número do livro para emprestar: ")
+                    livro_index_str = input("Digite o número do livro para pegar: ")
                     if livro_index_str.isdigit():
                         livro_index = int(livro_index_str) - 1
                         resultado = biblioteca.emprestarLivro(usuario_logado, livro_index)
@@ -80,11 +82,8 @@ def main():
                     livro_index_str = input("Digite o número do livro para devolver: ")
                     if livro_index_str.isdigit():
                         livro_index = int(livro_index_str) - 1
-                        livro = list(livrosEmprestados.keys())[livro_index]
                         resultado = biblioteca.devolverLivro(usuario_logado, livro)
                         print(resultado)
-                    else:
-                        print("Entrada inválida. Por favor, digite um número.")
                 else:
                     print("Nenhum livro emprestado para devolver.")
             

@@ -1,10 +1,12 @@
 import Pyro4
+import Pyro4.naming
 from datetime import datetime
 
 @Pyro4.expose
+@Pyro4.behavior(instance_mode="single")
 class Biblioteca:
     def __init__(self):
-        self.livros = []
+        self.livros = ['O Senhor dos Anéis', 'Harry Potter', 'As Crônicas de Nárnia', 'O Pequeno Príncipe', 'Dom Quixote', 'As Aventuras de Sherlock Holmes', 'O Hobbit', 'Cem Anos de Solidão', 'O Alquimista']
         self.livrosEmprestados = {}
         self.usuarios = {}
         self.sessoes = {}
@@ -31,7 +33,6 @@ class Biblioteca:
         return "Você não está logado."
 
     def adicionarLivro(self, livro):
-        livro = livro.lower()  # Transforma o nome do livro em minúsculas
         self.livros.append(livro)
         return f"Livro '{livro}' adicionado à biblioteca."
 
@@ -54,7 +55,7 @@ class Biblioteca:
         else:
             return "Índice de livro inválido."
 
-    def obterLivrosEmprestados(self, usuario=None):
+    def obterLivrosEmprestados(self, usuario=None): #Lista de livros que o leitor pegou emprestado
         if usuario:
             usuario = usuario.lower()  # Transforma o nome de usuário em minúsculas
             return {livro: info for livro, info in self.livrosEmprestados.items() if info['usuario'] == usuario}
@@ -67,7 +68,7 @@ class Biblioteca:
         
         livros_emprestados = self.obterLivrosEmprestados(usuario)
         if isinstance(livro_index, int) and 0 <= livro_index < len(livros_emprestados):
-            livro = list(livros_emprestados.keys())[livro_index]
+            livro = list(livros_emprestados)[livro_index]
             del self.livrosEmprestados[livro]
             self.livros.append(livro)
             return f"{livro} devolvido por {usuario}!"
@@ -77,11 +78,12 @@ class Biblioteca:
 def main():
     daemon = Pyro4.Daemon()
     ns = Pyro4.locateNS()
-    uri = daemon.register(Biblioteca())
-    ns.register("exemplo.biblioteca", uri)
+    uri = daemon.register(Biblioteca)
+    ns.register("acesso.biblioteca", str(uri))
 
     print("Servidor da biblioteca está em execução.")
     daemon.requestLoop()
+   
 
 if __name__ == "__main__":
     main()
