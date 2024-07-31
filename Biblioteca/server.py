@@ -3,7 +3,7 @@ import Pyro4.naming
 from datetime import datetime
 
 @Pyro4.expose
-@Pyro4.behavior(instance_mode="single")
+#Pyro4.behavior(instance_mode="single")
 class Biblioteca:
     def __init__(self):
         self.livros = ['O Senhor dos Anéis', 'Harry Potter', 'As Crônicas de Nárnia', 'O Pequeno Príncipe', 'Dom Quixote', 'As Aventuras de Sherlock Holmes', 'O Hobbit', 'Cem Anos de Solidão', 'O Alquimista']
@@ -76,10 +76,10 @@ class Biblioteca:
             return "Número inválido. Por favor, forneça um número válido de livro."
 
 def main():
-    daemon = Pyro4.Daemon()
+    daemon = Pyro4.Daemon(host = '10.112.9.217') # IP DA MÁQUINA ONDE O SERVIDOR DE NOMES RODA
+    uri = daemon.register(Biblioteca())
     ns = Pyro4.locateNS()
-    uri = daemon.register(Biblioteca)
-    ns.register("acesso.biblioteca", str(uri))
+    ns.register("acesso.biblioteca", uri)
 
     print("Servidor da biblioteca está em execução.")
     daemon.requestLoop()
@@ -87,3 +87,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
