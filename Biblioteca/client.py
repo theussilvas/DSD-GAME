@@ -20,7 +20,7 @@ def main():
     # uri = ns.lookup("acesso.biblioteca")
     # biblioteca = Pyro4.Proxy(uri)
 
-    biblioteca = Pyro4.Proxy(f"PYRONAME:acesso.biblioteca")
+    biblioteca = Pyro4.Proxy("PYRONAME:acesso.biblioteca")
 
     usuario_logado = None
 
