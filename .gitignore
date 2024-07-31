@@ -1,0 +1,2 @@
+__pycache__
+@Pyro4.behavior(instance_mode="single")
